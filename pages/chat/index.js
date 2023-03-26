@@ -51,7 +51,6 @@ const renderListItem = ({ id, isBot = false, messageText = "" }) => {
 
 export default function Chat() {
   //   console.log(process.env.OPENAI_API_KEY);
-
   const configuration = new Configuration({
     apiKey: OPENAI_API_KEY,
   });
