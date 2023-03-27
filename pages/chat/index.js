@@ -4,9 +4,9 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
   CircularProgress,
   Container,
+  GlobalStyles,
   IconButton,
   InputAdornment,
   List,
@@ -19,6 +19,9 @@ import {
 import Head from "next/head";
 import { Configuration, OpenAIApi } from "openai";
 import { useEffect, useRef, useState } from "react";
+import LayoutDashboard from "../components/LayoutDashboard";
+import MenuSidebar from "../components/MenuSidebar";
+import { routerMenu } from "../router/routerMenu";
 
 const LINK_DOC = `https://platform.openai.com/docs/api-reference/chat/create`;
 const BOT_AVATAR = `https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/800px-ChatGPT_logo.svg.png`;
@@ -30,16 +33,22 @@ const renderListItem = ({ id, isBot = false, messageText = "" }) => {
     <ListItem
       key={id}
       sx={(theme) => ({
-        backgroundColor: theme.palette.grey[isBot ? undefined : 800],
+        backgroundColor: isBot
+          ? theme.palette.grey[900]
+          : theme.palette.background.paper,
       })}
     >
       <ListItemAvatar sx={{ alignSelf: "flex-start" }}>
-        <Avatar variant="rounded" src={isBot ? BOT_AVATAR : undefined} />
+        <Avatar
+          sx={(theme) => ({ borderRadius: theme.spacing(3, 3, 1, 3) })}
+          variant="rounded"
+          alt={isBot ? "Bot" : "You"}
+          src={isBot ? BOT_AVATAR : undefined}
+        />
       </ListItemAvatar>
       <ListItemText
         primary={
           <>
-            {/* <strong>{isBot ? "Bot: " : "You: "}</strong> */}
             <span>{messageText}</span>
           </>
         }
@@ -121,84 +130,95 @@ export default function Chat() {
 
   return (
     <>
+      <GlobalStyles styles={{ body: { overflow: "hidden" } }} />
       <Head>
         <title>Chat GPT</title>
         <meta name="description" content="Connect chat GPT API" />
       </Head>
-      <Container disableGutters>
-        <Card
-          sx={(theme) => ({
-            backgroundColor: theme.palette.grey[900],
-            color: theme.palette.common.white,
-          })}
-        >
-          <CardHeader title="Chat GPT" />
-          <List
-            id="chatbox"
-            sx={() => ({
-              height: "80vh",
-              overflowY: "scroll",
-              whiteSpace: "pre-wrap",
+      <LayoutDashboard
+        appbar="Chat GPT"
+        sidebar={<MenuSidebar menu={routerMenu} />}
+        mainContent={
+          <Card
+            elevation={0}
+            sx={(theme) => ({
+              height: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
+              display: "flex",
+              flexDirection: "column",
             })}
           >
-            {messages.map((message) => {
-              const isBot = message.author === "bot";
-
-              return renderListItem({
-                id: message.id,
-                isBot,
-                messageText: message.text,
-              });
-            })}
-            {loading &&
-              renderListItem({
-                isBot: true,
-                messageText: (
-                  <>
-                    <CircularProgress size={16} />
-                  </>
-                ),
+            <List
+              id="chatbox"
+              disablePadding
+              sx={() => ({
+                flex: 1,
+                overflowY: "auto",
+                whiteSpace: "pre-wrap",
               })}
-          </List>
-          <CardContent>
-            <Toolbar disableGutters sx={{ justifyContent: "center" }}>
-              <Button
-                variant="contained"
-                size="small"
-                color="error"
-                startIcon={<Delete />}
-                onClick={handleClearConversation}
-              >
-                Clear conversation
-              </Button>
-            </Toolbar>
-            <Card>
-              <form onSubmit={handleSubmit}>
-                <TextField
-                  inputRef={inputRef}
-                  placeholder="Enter your message"
-                  fullWidth
-                  value={inputValue}
-                  onChange={handleChange}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          type="submit"
-                          color={loading ? "default" : "primary"}
-                          disabled={loading}
-                        >
-                          <Send />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </form>
-            </Card>
-          </CardContent>
-        </Card>
-      </Container>
+            >
+              {messages.map((message) => {
+                const isBot = message.author === "bot";
+
+                return renderListItem({
+                  id: message.id,
+                  isBot,
+                  messageText: message.text,
+                });
+              })}
+              {loading &&
+                renderListItem({
+                  isBot: true,
+                  messageText: (
+                    <>
+                      <CircularProgress size={20} />
+                    </>
+                  ),
+                })}
+            </List>
+            <CardContent
+              sx={{
+                flex: "0 0 auto",
+              }}
+            >
+              <Toolbar disableGutters sx={{ justifyContent: "center" }}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  color="error"
+                  startIcon={<Delete />}
+                  onClick={handleClearConversation}
+                >
+                  Clear conversation
+                </Button>
+              </Toolbar>
+              <Card>
+                <form onSubmit={handleSubmit}>
+                  <TextField
+                    inputRef={inputRef}
+                    placeholder="Enter your message"
+                    fullWidth
+                    value={inputValue}
+                    onChange={handleChange}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            type="submit"
+                            color={loading ? "default" : "primary"}
+                            disabled={loading}
+                          >
+                            <Send />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </form>
+              </Card>
+            </CardContent>
+          </Card>
+        }
+      />
     </>
   );
 }

@@ -1,7 +1,16 @@
-import { Box, Button, ButtonGroup, Container, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Container,
+  lighten,
+  Typography,
+} from "@mui/material";
 import { Inter } from "next/font/google";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
+import { routerMenu } from "./router/routerMenu";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,14 +25,15 @@ export default function Home() {
       </Head>
       <Container maxWidth={false} disableGutters>
         <Box
-          sx={{
+          sx={(theme) => ({
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
             height: "100vh",
-            background: "#74AA9D",
-          }}
+            background: theme.palette.grey[800],
+            color: theme.palette.common.white,
+          })}
         >
           <Image
             alt="Chat GPT"
@@ -36,9 +46,16 @@ export default function Home() {
           </Typography>
 
           <ButtonGroup>
-            <Button variant="contained" href="/chat">
-              Chat
-            </Button>
+            {routerMenu.map((route) => (
+              <Button
+                key={route.path}
+                variant="contained"
+                LinkComponent={Link}
+                href={route.path}
+              >
+                {route.label}
+              </Button>
+            ))}
           </ButtonGroup>
         </Box>
       </Container>
