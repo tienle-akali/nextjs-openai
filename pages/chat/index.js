@@ -125,7 +125,7 @@ export default function Chat() {
         <title>Chat GPT</title>
         <meta name="description" content="Connect chat GPT API" />
       </Head>
-      <Container disableGutters maxWidth={false}>
+      <Container disableGutters>
         <Card
           sx={(theme) => ({
             backgroundColor: theme.palette.grey[900],
