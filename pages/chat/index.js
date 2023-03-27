@@ -81,7 +81,7 @@ export default function Chat() {
       return;
     }
     setLoading(true);
-
+    setInputValue("");
     const newMessages = [
       ...messages,
       { id: messages.length + 1, text: inputValue, author: "user" },
@@ -102,7 +102,7 @@ export default function Chat() {
         ...newMessages,
         { id: messages.length + 2, text: outputValue, author: "bot" },
       ]);
-      setInputValue("");
+
       setLoading(false);
       handleFocusInput();
     } catch (error) {
