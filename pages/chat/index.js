@@ -9,7 +9,6 @@ import {
   Container,
   IconButton,
   InputAdornment,
-  Link,
   List,
   ListItem,
   ListItemAvatar,
@@ -133,14 +132,7 @@ export default function Chat() {
             color: theme.palette.common.white,
           })}
         >
-          <CardHeader
-            title="Chat GPT"
-            subheader={
-              <Link target="_blank" href={LINK_DOC}>
-                {LINK_DOC}
-              </Link>
-            }
-          />
+          <CardHeader title="Chat GPT" />
           <List
             id="chatbox"
             sx={() => ({
