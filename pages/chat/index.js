@@ -125,7 +125,7 @@ export default function Chat() {
         <title>Chat GPT</title>
         <meta name="description" content="Connect chat GPT API" />
       </Head>
-      <Container>
+      <Container disableGutters maxWidth={false}>
         <Card
           sx={(theme) => ({
             backgroundColor: theme.palette.grey[900],
@@ -136,7 +136,7 @@ export default function Chat() {
           <List
             id="chatbox"
             sx={() => ({
-              height: "60vh",
+              height: "80vh",
               overflowY: "scroll",
               whiteSpace: "pre-wrap",
             })}
