@@ -4,8 +4,6 @@ import {
   Button,
   Card,
   CardContent,
-  CircularProgress,
-  Container,
   GlobalStyles,
   IconButton,
   InputAdornment,
@@ -26,7 +24,7 @@ import { routerMenu } from "../router/routerMenu";
 const LINK_DOC = `https://platform.openai.com/docs/api-reference/chat/create`;
 const BOT_AVATAR = `https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/800px-ChatGPT_logo.svg.png`;
 
-const OPENAI_API_KEY = "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";
+// const OPENAI_API_KEY = "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";
 
 const renderListItem = ({ id, isBot = false, messageText = "" }) => {
   return (
@@ -60,7 +58,8 @@ const renderListItem = ({ id, isBot = false, messageText = "" }) => {
 export default function Chat() {
   //   console.log(process.env.OPENAI_API_KEY);
   const configuration = new Configuration({
-    apiKey: OPENAI_API_KEY,
+    organization: "org-JCyZSYjfRaLDtltkimhxFO7j",
+    apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
   });
   const openai = new OpenAIApi(configuration);
 
@@ -81,6 +80,7 @@ export default function Chat() {
   const handleClearConversation = () => {
     setMessages([]);
     handleFocusInput();
+    setLoading(false);
   };
 
   const handleSubmit = async (event) => {
@@ -168,11 +168,7 @@ export default function Chat() {
               {loading &&
                 renderListItem({
                   isBot: true,
-                  messageText: (
-                    <>
-                      <CircularProgress size={20} />
-                    </>
-                  ),
+                  messageText: <>is typing...</>,
                 })}
             </List>
             <CardContent
@@ -197,6 +193,7 @@ export default function Chat() {
                     inputRef={inputRef}
                     placeholder="Enter your message"
                     fullWidth
+                    autoFocus
                     value={inputValue}
                     onChange={handleChange}
                     InputProps={{
