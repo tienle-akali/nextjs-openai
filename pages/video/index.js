@@ -24,6 +24,9 @@ export default function Video() {
 
         <video
           id="player"
+          controls
+          autoPlay
+          playsInline
           crossOrigin="anonymous"
           poster="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
         >
