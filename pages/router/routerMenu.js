@@ -11,6 +11,10 @@ const routerMenu = [
     path: "/image",
     label: "Image",
   },
+  {
+    path: "/video",
+    label: "Video",
+  },
 ];
 
 export { routerMenu };
