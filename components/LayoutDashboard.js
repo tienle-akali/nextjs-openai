@@ -1,4 +1,5 @@
 import MenuIcon from "@mui/icons-material/Menu";
+import { Avatar, Stack } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -9,6 +10,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
 import * as React from "react";
+import { appInfo } from "../config/info";
+import Copyright from "./Copyright";
 
 const drawerWidth = 240;
 
@@ -25,6 +28,9 @@ function LayoutDashboard(props) {
       <Toolbar />
       <Divider />
       {sidebar}
+      <Box sx={{ mt: "auto", mb: 2, ml: 2, mr: 2 }}>
+        <Copyright />
+      </Box>
     </div>
   );
 
@@ -38,19 +44,22 @@ function LayoutDashboard(props) {
           ml: { sm: `${drawerWidth}px` },
         }}
       >
-        <Toolbar>
+        <Toolbar sx={{ justifyContent: "space-between", gap: 2 }}>
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Avatar sx={{ borderRadius: 0 }} alt="Logo" src={appInfo.logo} />
+            <Typography variant="h6" noWrap component="div">
+              {appbar}
+            </Typography>
+          </Stack>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
+            sx={{ ml: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            {appbar}
-          </Typography>
         </Toolbar>
       </AppBar>
       <Box

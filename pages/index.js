@@ -1,18 +1,10 @@
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Container,
-  lighten,
-  Typography,
-} from "@mui/material";
-import { Inter } from "next/font/google";
+import { Box, Button, ButtonGroup, Container, Typography } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { routerMenu } from "./router/routerMenu";
-
-const inter = Inter({ subsets: ["latin"] });
+import { routerMenu } from "../config/routerMenu";
+import Copyright from "../components/Copyright";
+import { appInfo } from "../config/info";
 
 export default function Home() {
   return (
@@ -30,19 +22,15 @@ export default function Home() {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
+            gap: 2,
             height: "100vh",
             background: theme.palette.grey[800],
             color: theme.palette.common.white,
           })}
         >
-          <Image
-            alt="Chat GPT"
-            src="/chatgpt_logo.svg.png"
-            width={120}
-            height={120}
-          />
+          <Image alt="Chat GPT" src={appInfo.logo} width={120} height={120} />
           <Typography variant="h4" paragraph>
-            My projects
+            {appInfo.name}
           </Typography>
 
           <ButtonGroup>
@@ -57,6 +45,8 @@ export default function Home() {
               </Button>
             ))}
           </ButtonGroup>
+
+          <Copyright />
         </Box>
       </Container>
     </>
