@@ -8,6 +8,9 @@ const primaryTheme = createTheme({
       main: teal[500],
     },
   },
+  typography: {
+    fontFamily: "var(--font-primary), sans-serif",
+  },
 });
 
 export default primaryTheme;

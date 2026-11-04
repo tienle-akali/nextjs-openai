@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import PropTypes from "prop-types";
 
-function MenuSidebar({ menu }) {
+function MenuSidebar({ menu = [] }) {
   return (
     <List>
       {menu.map((menuItem, index) => (

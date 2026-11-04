@@ -5,13 +5,25 @@ import "plyr/dist/plyr.css";
 import * as React from "react";
 
 export default function Video() {
-  // React.useEffect(() => {
-  //   const player = new Plyr("video", {
-  //     captions: { active: true },
-  //     autoplay: true,
-  //     playsinline: true,
-  //   });
-  // }, []);
+  React.useEffect(() => {
+    let player;
+    let cancelled = false;
+
+    import("plyr").then(({ default: Plyr }) => {
+      if (cancelled) return;
+
+      player = new Plyr("#player", {
+        captions: { active: true },
+        autoplay: true,
+        playsinline: true,
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      player?.destroy(); // Cleanup the player instance on component unmount
+    };
+  }, []);
 
   return (
     <>
@@ -20,12 +32,13 @@ export default function Video() {
         <meta name="description" content="Test Video Plyr" />
       </Head>
       <Container>
-        <Typography>Test Video Plyr</Typography>
+        <Typography variant="subtitle1">Test Video Plyr</Typography>
 
         <video
           id="player"
           controls
           autoPlay
+          muted
           playsInline
           crossOrigin="anonymous"
           poster="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"

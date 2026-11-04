@@ -1,5 +1,6 @@
 import { Delete, Send } from "@mui/icons-material";
 import {
+  Alert,
   Avatar,
   Button,
   Card,
@@ -17,14 +18,13 @@ import {
 import Head from "next/head";
 import { Configuration, OpenAIApi } from "openai";
 import { useEffect, useRef, useState } from "react";
-import LayoutDashboard from "../components/LayoutDashboard";
-import MenuSidebar from "../components/MenuSidebar";
-import { routerMenu } from "../router/routerMenu";
+import LayoutDashboard from "../../components/LayoutDashboard";
+import MenuSidebar from "../../components/MenuSidebar";
+import { routerMenu } from "../../config/routerMenu";
+import { appInfo } from "../../config/info";
 
-const LINK_DOC = `https://platform.openai.com/docs/api-reference/chat/create`;
-const BOT_AVATAR = `https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/800px-ChatGPT_logo.svg.png`;
-
-// const OPENAI_API_KEY = "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";
+// const LINK_DOC = `https://platform.openai.com/docs/api-reference/chat/create`;
+const BOT_AVATAR = appInfo.logo;
 
 const renderListItem = ({ id, isBot = false, messageText = "" }) => {
   return (
@@ -56,16 +56,15 @@ const renderListItem = ({ id, isBot = false, messageText = "" }) => {
 };
 
 export default function Chat() {
-  //   console.log(process.env.OPENAI_API_KEY);
   const configuration = new Configuration({
-    organization: "org-JCyZSYjfRaLDtltkimhxFO7j",
-    apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+    apiKey: process.env.OPENAI_API_KEY,
   });
   const openai = new OpenAIApi(configuration);
 
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const inputRef = useRef();
 
@@ -81,6 +80,7 @@ export default function Chat() {
     setMessages([]);
     handleFocusInput();
     setLoading(false);
+    setError(null);
   };
 
   const handleSubmit = async (event) => {
@@ -88,7 +88,6 @@ export default function Chat() {
     if (inputValue.trim() === "") {
       return;
     }
-    setLoading(true);
     setInputValue("");
     const newMessages = [
       ...messages,
@@ -98,12 +97,20 @@ export default function Chat() {
     setMessages(newMessages);
 
     try {
+      setLoading(true);
       event.preventDefault();
       const response = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         messages: [{ role: "user", content: inputValue }],
       });
       console.log("response: ", response);
+      if (!response.ok) {
+        setError(
+          "Failed to create chat completion: ",
+          response.data.error.message,
+        );
+      }
+
       const outputValue = response.data.choices[0].message.content;
 
       setMessages([
@@ -111,15 +118,15 @@ export default function Chat() {
         { id: messages.length + 2, text: outputValue, author: "bot" },
       ]);
 
-      setLoading(false);
       handleFocusInput();
     } catch (error) {
-      if (error.response) {
-        console.log("status: ", error.response.status);
-        console.log("data: ", error.response.data);
-      } else {
-        console.log(error.message);
-      }
+      setError(
+        error.response?.data?.error?.message ||
+          error?.message ||
+          "An error occurred while processing your request.",
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -132,11 +139,11 @@ export default function Chat() {
     <>
       <GlobalStyles styles={{ body: { overflow: "hidden" } }} />
       <Head>
-        <title>Chat GPT</title>
+        <title>{appInfo.name}</title>
         <meta name="description" content="Connect chat GPT API" />
       </Head>
       <LayoutDashboard
-        appbar="Chat GPT"
+        appbar={appInfo.name}
         sidebar={<MenuSidebar menu={routerMenu} />}
         mainContent={
           <Card
@@ -170,23 +177,32 @@ export default function Chat() {
                   isBot: true,
                   messageText: <>is typing...</>,
                 })}
+              {error && (
+                <ListItem>
+                  <ListItemText>
+                    <Alert severity="error">{error}</Alert>
+                  </ListItemText>
+                </ListItem>
+              )}
             </List>
             <CardContent
               sx={{
                 flex: "0 0 auto",
               }}
             >
-              <Toolbar disableGutters sx={{ justifyContent: "center" }}>
-                <Button
-                  variant="contained"
-                  size="small"
-                  color="error"
-                  startIcon={<Delete />}
-                  onClick={handleClearConversation}
-                >
-                  Clear conversation
-                </Button>
-              </Toolbar>
+              {messages.length > 0 && (
+                <Toolbar disableGutters sx={{ justifyContent: "center" }}>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    color="error"
+                    startIcon={<Delete />}
+                    onClick={handleClearConversation}
+                  >
+                    Clear conversation
+                  </Button>
+                </Toolbar>
+              )}
               <Card>
                 <form onSubmit={handleSubmit}>
                   <TextField
