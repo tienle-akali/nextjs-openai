@@ -1,17 +1,17 @@
 import { Container, Typography } from "@mui/material";
 import Head from "next/head";
-import Plyr from "plyr";
+// import Plyr from "plyr";
 import "plyr/dist/plyr.css";
 import * as React from "react";
 
 export default function Video() {
-  React.useEffect(() => {
-    const player = new Plyr("video", {
-      captions: { active: true },
-      autoplay: true,
-      playsinline: true,
-    });
-  }, []);
+  // React.useEffect(() => {
+  //   const player = new Plyr("video", {
+  //     captions: { active: true },
+  //     autoplay: true,
+  //     playsinline: true,
+  //   });
+  // }, []);
 
   return (
     <>
