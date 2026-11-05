@@ -16,12 +16,11 @@ import {
   Toolbar,
 } from "@mui/material";
 import Head from "next/head";
-import { Configuration, OpenAIApi } from "openai";
 import { useEffect, useRef, useState } from "react";
 import LayoutDashboard from "../../components/LayoutDashboard";
 import MenuSidebar from "../../components/MenuSidebar";
-import { routerMenu } from "../../config/routerMenu";
 import { appInfo } from "../../config/info";
+import { routerMenu } from "../../config/routerMenu";
 
 // const LINK_DOC = `https://platform.openai.com/docs/api-reference/chat/create`;
 const BOT_AVATAR = appInfo.logo;
@@ -56,27 +55,27 @@ const renderListItem = ({ id, isBot = false, messageText = "" }) => {
 };
 
 export default function Chat() {
-  const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-  const openai = new OpenAIApi(configuration);
-
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const inputRef = useRef();
+  const inputRef = useRef(null);
+  const chatboxRef = useRef(null);
+  const requestIdRef = useRef(0);
+  const requestInFlightRef = useRef(false);
 
   const handleChange = (event) => {
     setInputValue(event.target.value);
   };
 
   const handleFocusInput = () => {
-    inputRef.current.focus();
+    inputRef.current?.focus();
   };
 
   const handleClearConversation = () => {
+    requestIdRef.current += 1;
+    requestInFlightRef.current = false;
     setMessages([]);
     handleFocusInput();
     setLoading(false);
@@ -85,54 +84,68 @@ export default function Chat() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (inputValue.trim() === "") {
+    const text = inputValue.trim();
+    if (!text || requestInFlightRef.current) {
       return;
     }
-    setInputValue("");
+
+    requestInFlightRef.current = true;
+    const requestId = ++requestIdRef.current;
     const newMessages = [
       ...messages,
-      { id: messages.length + 1, text: inputValue, author: "user" },
+      { id: messages.length + 1, text, author: "user" },
     ];
 
+    setInputValue("");
     setMessages(newMessages);
+    setError(null);
 
     try {
       setLoading(true);
-      event.preventDefault();
-      const response = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: inputValue }],
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: newMessages.map(({ text: messageText, author }) => ({
+            role: author === "bot" ? "assistant" : "user",
+            content: messageText,
+          })),
+        }),
       });
-      console.log("response: ", response);
+      const data = await response.json();
+
       if (!response.ok) {
-        setError(
-          "Failed to create chat completion: ",
-          response.data.error.message,
-        );
+        throw new Error(data.error || "Failed to create chat completion");
       }
 
-      const outputValue = response.data.choices[0].message.content;
+      if (requestId !== requestIdRef.current) return;
 
-      setMessages([
-        ...newMessages,
-        { id: messages.length + 2, text: outputValue, author: "bot" },
+      setMessages((currentMessages) => [
+        ...currentMessages,
+        {
+          id: newMessages.length + 1,
+          text: data.message,
+          author: "bot",
+        },
       ]);
-
       handleFocusInput();
     } catch (error) {
-      setError(
-        error.response?.data?.error?.message ||
-          error?.message ||
-          "An error occurred while processing your request.",
-      );
+      if (requestId === requestIdRef.current) {
+        setError(error?.message || "An error occurred. Please try again.");
+      }
     } finally {
-      setLoading(false);
+      if (requestId === requestIdRef.current) {
+        requestInFlightRef.current = false;
+        setLoading(false);
+      }
     }
   };
 
   useEffect(() => {
-    const chatbox = document.getElementById("chatbox");
-    chatbox.scrollTop = chatbox.scrollHeight;
+    const chatbox = chatboxRef.current;
+    if (chatbox) {
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
   }, [messages, loading]);
 
   return (
@@ -156,6 +169,7 @@ export default function Chat() {
           >
             <List
               id="chatbox"
+              ref={chatboxRef}
               disablePadding
               sx={() => ({
                 flex: 1,
