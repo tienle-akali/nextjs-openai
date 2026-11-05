@@ -1,5 +1,6 @@
 export const appInfo = {
   name: "OpenChat",
+  assistantName: "Minh Anh",
   developer: "TienDev",
   developerWebsite: "https://tiendev.io.vn",
   developedYear: 2023,

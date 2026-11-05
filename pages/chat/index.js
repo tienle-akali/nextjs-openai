@@ -148,6 +148,10 @@ export default function Chat() {
     }
   }, [messages, loading]);
 
+  useEffect(() => {
+    handleFocusInput();
+  }, []);
+
   return (
     <>
       <GlobalStyles styles={{ body: { overflow: "hidden" } }} />
