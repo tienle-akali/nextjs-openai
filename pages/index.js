@@ -28,7 +28,13 @@ export default function Home() {
             color: theme.palette.common.white,
           })}
         >
-          <Image alt="Chat GPT" src={appInfo.logo} width={120} height={120} />
+          <Image
+            alt="Chat GPT"
+            src={appInfo.logo}
+            width={120}
+            height={120}
+            priority
+          />
           <Typography variant="h4" paragraph>
             {appInfo.name}
           </Typography>
