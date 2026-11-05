@@ -4,4 +4,5 @@ export const appInfo = {
   developerWebsite: "https://tiendev.io.vn",
   developedYear: 2023,
   logo: "/chatgpt_logo.svg.png",
+  description: "A simple chat interface for interacting with AI models.",
 };

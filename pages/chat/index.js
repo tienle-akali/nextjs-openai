@@ -153,7 +153,7 @@ export default function Chat() {
       <GlobalStyles styles={{ body: { overflow: "hidden" } }} />
       <Head>
         <title>{appInfo.name}</title>
-        <meta name="description" content="Connect chat GPT API" />
+        <meta name="description" content={appInfo.description} />
       </Head>
       <LayoutDashboard
         appbar={appInfo.name}

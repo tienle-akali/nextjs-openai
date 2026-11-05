@@ -5,12 +5,8 @@ const routerMenu = [
   },
   {
     path: "/chat",
-    label: "Chat with GPT",
+    label: "Chat with me",
   },
-  // {
-  //   path: "/image",
-  //   label: "Image",
-  // },
   {
     path: "/video",
     label: "Video",
