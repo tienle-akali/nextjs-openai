@@ -12,6 +12,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import { appInfo } from "../config/info";
 import Copyright from "./Copyright";
+import Link from "next/link";
 
 const drawerWidth = 240;
 
@@ -45,12 +46,18 @@ function LayoutDashboard(props) {
         }}
       >
         <Toolbar sx={{ justifyContent: "space-between", gap: 2 }}>
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar sx={{ borderRadius: 0 }} alt="Logo" src={appInfo.logo} />
-            <Typography variant="h6" noWrap component="div">
-              {appbar}
-            </Typography>
-          </Stack>
+          <Link
+            href="/"
+            passHref
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <Avatar sx={{ borderRadius: 0 }} alt="Logo" src={appInfo.logo} />
+              <Typography variant="h6" noWrap component="div">
+                {appbar}
+              </Typography>
+            </Stack>
+          </Link>
           <IconButton
             color="inherit"
             aria-label="open drawer"

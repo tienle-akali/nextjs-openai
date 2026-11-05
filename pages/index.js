@@ -29,7 +29,7 @@ export default function Home() {
           })}
         >
           <Image
-            alt="Chat GPT"
+            alt={appInfo.name}
             src={appInfo.logo}
             width={120}
             height={120}
